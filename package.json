@@ -1,0 +1,26 @@
+{
+  "name": "subleq-oisc",
+  "version": "1.0.0",
+  "description": "An n-bit SUBLEQ virtual machine with test programs.",
+  "main": "subleq.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/howerj/subleq-nodejs.git"
+  },
+  "keywords": [
+    "subleq",
+    "oisc",
+    "vm",
+    "forth",
+    "eforth"
+  ],
+  "author": "Richard James Howe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/howerj/subleq-nodejs/issues"
+  },
+  "homepage": "https://github.com/howerj/subleq-nodejs#readme"
+}
