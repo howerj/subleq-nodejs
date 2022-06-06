@@ -1,5 +1,5 @@
 {
-  "name": "subleq-oisc",
+  "name": "@howerj/subleq",
   "version": "1.0.0",
   "description": "An n-bit SUBLEQ virtual machine with test programs.",
   "main": "subleq.js",
@@ -13,6 +13,7 @@
   "keywords": [
     "subleq",
     "oisc",
+    "16-bit",
     "vm",
     "forth",
     "eforth"
