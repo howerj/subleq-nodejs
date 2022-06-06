@@ -39,6 +39,9 @@ and loads it into the SUBLEQ VM, it then executes it.
 
 ```
 
+This example runs the default eForth image and allows the user to
+interactively program in a REPL.
+
 ```js
 	const subleq = require('./subleq');
 
@@ -55,6 +58,25 @@ and loads it into the SUBLEQ VM, it then executes it.
 	cpu.load(cpu.eforth());
 	cpu.eval(".( EFORTH READY ) cr");
 	cpu.run()
+```
+
+All options width sensible default values are shown here:
+
+```js
+	const subleq = require('./subleq');
+
+	var cpu = new subleq({
+	  putch: function (ch) { process.stdout.write(String.fromCharCode(ch)); }, // Example putch, writes to stdout
+	  getch: function () { // Example getch, reads from stdin
+		let buffer = Buffer.alloc(1)
+		if (require("fs").readSync(0, buffer, 0, 1) != 1)
+			return -1;
+		return buffer.toString('utf8').charCodeAt(0);
+	  },
+	  debug: false, // If true debugging information is logged to the console
+	  width: 16, // SUBLEQ machine width, 8-32 bit inclusive
+	  timeout_ms: 0, // If non zero setTimeout will be called when cycles run out or input returns an error
+	});
 ```
 
 # API
@@ -82,7 +104,8 @@ can be called if the *run* parameter is true. The function will return
 This function returns an array containing a complete [Forth](https://en.wikipedia.org/wiki/Forth_%28programming_language%29) 
 image, which when used in conjunction with *load()* will run a the
 programming language, care must be taken to hook up the appropriate
-*putch* and *getch* functions.
+*putch* and *getch* functions. The eForth image will only work on the
+16-bit version of the SUBLEQ VM!
 
 ## get/set putch
 
@@ -95,6 +118,9 @@ which should represent a single [ASCII](https://en.wikipedia.org/wiki/ASCII)
 character to be output. You may return negative on failure, but it will
 not be used by the SUBLEQ VM (output is assumed to succeed).
 
+The default *putch* callback will swallow characters, doing nothing
+with them.
+
 ## get/set getch
 
 This getter/setter combo allow the setting of the *getch* function
@@ -106,9 +132,17 @@ should return a number representing the
 [ASCII](https://en.wikipedia.org/wiki/ASCII) character value to
 be input.
 
-## run()
+The default *getch* callback will return -1, indicating failure
+to get input.
 
-Run the currently loaded program.
+## run(cycles = 0)
+
+Run the currently loaded program, this will be run for the number
+of cycles given to the program (or if the cycles is set to zero,
+which it is by default, it will continue to run until some other
+halt conditions are met).
+
+The function currently always returns *null*.
 
 ## step()
 
@@ -122,4 +156,16 @@ Prevent the machine from running.
 ## start()
 
 Continue a *stop()*'ped machine.
+
+## reset()
+
+Reset execution so the Virtual Machine as it was when execution
+started (eg. The program counter is zero).
+
+## eval(s, append = "\n")
+
+Evaluate a string, *s*, that is set the input to the virtual machine to
+the string and continue *run()* the VM until the input is consumed
+by the previously loaded program. *append* is appended to the input
+string *s*. The program might chose to do nothing with the string.
 

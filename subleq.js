@@ -1,29 +1,20 @@
 /* N-Bit SUBLEQ <https://github.com/howerj/subleq-nodejs> by Richard James Howe */
 
-/* TODO: scopes/namespaces, run should yield, load/run all in one,
-add default program images such as eForth image. */
-
 module.exports = class subleq {
 	constructor(options) {
 		options = options || {};
-		this.debug = options.debug || false;
+		this.debug = !!options.debug;
 		this.width = options.width || 16;
 		this.putch = options.putch || function (ch) { };
 		this.getch = options.getch || function () { return -1; }
+		this.timeout_ms = options.timeout_ms || 0;
 
-		if (options.cycles) {
-			this.cyclesToRunFor = options.cycles;
-			this.forever = false;
-		}
 		if (isNaN(this.width) || this.width < 8 || this.width > 32) {
 			throw "Machine width invalid (should be 8-32 bits inclusive)";
 		}
 		this.running = true;
 		this.pc = 0;
-		this.forever = true;
-		this.timeout_ms = 10;
-		this.timeout = false;
-		this.cyclesToRunFor = 0;
+
 		this.cyclesTotal = 0;
 		this.stopRunningOnEndOfInput = false;
 		this.size = 3;
@@ -56,14 +47,11 @@ module.exports = class subleq {
 		this.evalString = "";
 	}
 
-	eval(s) {
+	eval(s, append = "\n") {
 		var oGetch = this.getch;
 		if (s === null)
 			return;
-		s = s.trim();
-		if (s == "")
-			return;
-		this.evalString = s + "\n\n";
+		this.evalString = s + append;
 		function eGetch () {
 			if (this.evalString.length == 0)
 				this.getch = oGetch;
@@ -101,13 +89,14 @@ module.exports = class subleq {
 	}
 
 
-	run() { /* The ISA of the future! */
+	run(cycles = 0) { /* The ISA of the future! */
 		var pc = this.pc, 
-			cyclesToRunFor = this.cyclesToRunFor, 
+			cyclesToRunFor = cycles,
+			forever = cycles === 0,
 			size = this.size, 
 			m = this.m,
 			width = this.width;
-		var cycles = 0;
+		cycles = 0;
 
 		/* - We should use "function l(addr) { return addr % this.size; }"
 		 * to limit memory access and should be used like "a = * m[l(pc+0)];". 
@@ -118,13 +107,15 @@ module.exports = class subleq {
 		function msk(n) { return n < 32 ? (1 << n) - 1: 0xFFFFFFFF; }
 		function hi(n) { return (1 << ((n) - 1)); }
 		while (pc < size && this.running) {
-			if (!this.forever && cycles++ > cyclesToRunFor) { 
+			if (!forever && cycles > cyclesToRunFor) { 
 				this.cyclesTotal += cycles;
 				cycles = 0; 
 				this.pc = pc;
-				if (this.timeout) { setTimeout(this.run, this.timeout_ms); }
-				return null; 
+				if (this.timeout_ms === 0)
+					return null;
+				setTimeout(function () { this.run(cyclesToRunFor); }, this.timeout_ms);
 			}
+			pc &= msk(width);
 			let a = m[pc+0];
 			let b = m[pc+1];
 			let c = m[pc+2];
@@ -137,7 +128,9 @@ module.exports = class subleq {
 					if (this.stopRunningOnEndOfInput) {
 						this.stop();
 					} else {
-						if (this.timeout) { setTimeout(this.run, this.timeout_ms); }
+						if (this.timeout_ms === 0)
+							return null;
+						setTimeout(function () { this.run(cyclesToRunFor); }, this.timeout_ms);
 					}
 					return null;
 				}
@@ -152,20 +145,16 @@ module.exports = class subleq {
 				m[b] = d;
 				pc = (d & hi(width)) || (d === 0) ? c : pc + 3;
 			}
-			pc &= msk(width);
+			cycles++;
 		}
 		this.pc = pc;
 		return null;
 	}
 
 	step() {
-		var cycles = this.cyclesToRunFor, forever = this.forever, running = this.running;
-		this.cyclesToRunFor = 1;
-		this.forever = false;
+		var running = this.running;
 		this.running = true;
-		var r = this.run();
-		this.cyclesToRunFor = cycles;
-		this.forever = forever;
+		var r = this.run(1);
 		this.running = running;
 		return r;
 	}

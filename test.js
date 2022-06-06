@@ -12,7 +12,7 @@ var cpu = new subleq({
 	if (require("fs").readSync(0, buffer, 0, 1) != 1)
 		return -1;
 	return buffer.toString('utf8').charCodeAt(0);
-  }
+  },
 });
 
 cpu.loadFromString(hi, true);
@@ -23,5 +23,6 @@ cpu.load(cpu.eforth());
 
 cpu.eval(".( EFORTH LOADED - USED:) here u. cr");
 cpu.eval(".( WORDS: ) words cr");
+cpu.eval("");
 
 
