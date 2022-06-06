@@ -1,4 +1,4 @@
-const subleq = require("./subleq")
+const subleq = require("@howerj/subleq")
 
 const hi = `9 -1 3 10 -1 6 0 0 -1 72 105 0`;
 const hello = `12 12 3 36 37 6 37 12 9 37 37 12 0 -1 15 38 36 18

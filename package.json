@@ -1,6 +1,6 @@
 {
   "name": "@howerj/subleq",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An n-bit SUBLEQ virtual machine with test programs.",
   "main": "subleq.js",
   "scripts": {
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/howerj/subleq-nodejs/issues"
   },
-  "homepage": "https://github.com/howerj/subleq-nodejs#readme"
+  "homepage": "https://github.com/howerj/subleq-nodejs#readme",
+  "dependencies": {
+    "subleq": "^1.0.0"
+  }
 }

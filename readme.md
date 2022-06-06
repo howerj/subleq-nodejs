@@ -25,7 +25,7 @@ and loads it into the SUBLEQ VM, it then executes it.
 
 
 ```js
-	const subleq = require("./subleq")
+	const subleq = require("@howerj/subleq")
 
 	const hello = `12 12 3 36 37 6 37 12 9 37 37 12 0 -1 15 38 36 18
 	12 12 21 53 37 24 37 12 27 37 37 30 36 12 -1 37 37 0 39 0 -1 72 101 108
@@ -43,7 +43,7 @@ This example runs the default eForth image and allows the user to
 interactively program in a REPL.
 
 ```js
-	const subleq = require('./subleq');
+	const subleq = require('@howerj/subleq');
 
 	var cpu = new subleq({
 	  putch: function (ch) { process.stdout.write(String.fromCharCode(ch)); },
@@ -63,7 +63,7 @@ interactively program in a REPL.
 All options width sensible default values are shown here:
 
 ```js
-	const subleq = require('./subleq');
+	const subleq = require('@howerj/subleq');
 
 	var cpu = new subleq({
 	  putch: function (ch) { process.stdout.write(String.fromCharCode(ch)); }, // Example putch, writes to stdout
