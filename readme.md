@@ -10,6 +10,11 @@ One Instruction Set Computer (OISC). The default cell size is 16-bit. Images can
 large as you like, but be aware the machine cell width restricts how much the
 OISC can address. It's just for fun.
 
+If you feel like supporting the project you can buy a book from
+Amazon, available [here](https://www.amazon.com/SUBLEQ-EFORTH-Forth-Metacompilation-Machine-ebook/dp/B0B5VZWXPL)
+that describes how the project works and how to port a Forth to
+a new platform.
+
 Similar projects, same author:
 
 * <https://github.com/howerj/subleq>, virtual machine written in C with
